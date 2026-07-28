@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="2026년 디지털 혁신 사업계획을 검색하고 확인할 수 있는 내부 직원용 사업 안내 도구"
+  />
+  <title>2026년 디지털 혁신 사업계획</title>
+
+  <style>
+    :root {
+      --primary: #167d73;
+      --primary-dark: #0f5f58;
+      --primary-soft: #e7f7f4;
+      --accent: #f0a443;
+      --text: #17232d;
+      --muted: #64737f;
+      --line: #dfe8e7;
+      --surface: #ffffff;
+      --background: #f3f8f7;
+      --shadow: 0 12px 30px rgba(26, 68, 64, 0.08);
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(82, 190, 177, 0.15), transparent 32rem),
+        linear-gradient(180deg, #f8fbfa 0%, var(--background) 100%);
+      font-family:
+        Pretendard, "Noto Sans KR", "Apple SD Gothic Neo",
+        -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 44px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(13, 105, 96, 0.98), rgba(31, 145, 133, 0.92));
+      color: #fff;
+      box-shadow: 0 18px 46px rgba(15, 95, 88, 0.2);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -70px;
+      width: 260px;
+      height: 260px;
+      border: 48px solid rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
+      padding: 7px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #bdf3e9;
+      box-shadow: 0 0 0 5px rgba(189, 243, 233, 0.13);
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1.16;
+      letter-spacing: -0.045em;
+    }
+
+    .hero-description {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 1rem;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 14px;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      margin: 24px 0;
+      padding: 15px;
+      border: 1px solid rgba(215, 229, 227, 0.9);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      left: 17px;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      color: var(--primary);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 52px;
+      padding: 0 50px 0 50px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      outline: none;
+      background: #fbfdfd;
+      color: var(--text);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .search-input::placeholder {
+      color: #8b989f;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(22, 125, 115, 0.12);
+    }
+
+    .clear-button {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      display: none;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      transform: translateY(-50%);
+      background: #e9f2f1;
+      color: #50615f;
+      cursor: pointer;
+    }
+
+    .clear-button.visible {
+      display: grid;
+      place-items: center;
+    }
+
+    .result-count {
+      min-width: 108px;
+      padding: 13px 18px;
+      border-radius: 14px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      text-align: center;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .result-count strong {
+      font-size: 1.12rem;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .project-card {
+      display: flex;
+      min-height: 278px;
+      flex-direction: column;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: 0 8px 22px rgba(33, 68, 65, 0.055);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(22, 125, 115, 0.38);
+      box-shadow: 0 16px 34px rgba(33, 68, 65, 0.11);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .project-id {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .period-badge {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .project-name {
+      margin: 18px 0 20px;
+      font-size: 1.2rem;
+      line-height: 1.35;
+      letter-spacing: -0.025em;
+    }
+
+    .metrics {
+      display: grid;
+      gap: 10px;
+      margin: auto 0 0;
+    }
+
+    .metric {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #e4eceb;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .metric-value {
+      text-align: right;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .metric-value.revenue {
+      color: var(--primary);
+    }
+
+    .empty-state {
+      display: none;
+      padding: 54px 20px;
+      border: 1px dashed #bfd3d0;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.75);
+      text-align: center;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+
+    .empty-icon {
+      display: grid;
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 15px;
+      place-items: center;
+      border-radius: 18px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 1.65rem;
+    }
+
+    .empty-state h2 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+    }
+
+    .empty-state p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 34px;
+      color: #7c898f;
+      text-align: center;
+      font-size: 0.82rem;
+    }
+
+    mark {
+      padding: 0 2px;
+      border-radius: 3px;
+      background: #fff0ba;
+      color: inherit;
+    }
+
+    @media (max-width: 940px) {
+      .project-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell {
+        width: min(100% - 20px, 1180px);
+        padding-top: 18px;
+      }
+
+      .hero {
+        padding: 28px 22px;
+        border-radius: 22px;
+      }
+
+      .toolbar {
+        top: 8px;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .result-count {
+        padding: 10px 14px;
+      }
+
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .project-card {
+        min-height: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page-shell">
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">행정안전부 · 2026 업무지원</p>
+      <h1 id="page-title">디지털 혁신 사업계획</h1>
+      <p class="hero-description">
+        사업명 또는 사업 ID를 검색해 주요 예산과 사업 기간을 빠르게 확인할 수 있습니다.
+      </p>
+    </section>
+
+    <section class="toolbar" aria-label="사업 검색 및 결과">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="m21 21-4.35-4.35m2.35-5.15a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <label for="searchInput" class="sr-only">사업명 또는 사업 ID 검색</label>
+        <input
+          id="searchInput"
+          class="search-input"
+          type="search"
+          autocomplete="off"
+          placeholder="사업명 또는 사업 ID 검색 (예: DP-010)"
+        />
+        <button id="clearButton" class="clear-button" type="button" aria-label="검색어 지우기">×</button>
+      </div>
+
+      <div id="resultCount" class="result-count" aria-live="polite">
+        결과 <strong>30</strong>건
+      </div>
+    </section>
+
+    <section id="projectGrid" class="project-grid" aria-label="사업계획 목록"></section>
+
+    <section id="emptyState" class="empty-state" aria-live="polite">
+      <div class="empty-icon" aria-hidden="true">⌕</div>
+      <h2>검색 결과가 없습니다</h2>
+      <p>사업명이나 사업 ID를 다시 확인해 주세요.</p>
+    </section>
+
+    <footer>
+      본 페이지는 2026년 디지털 혁신 사업계획 안내를 위한 가상 업무 도구입니다.
+    </footer>
+  </main>
+
+  <script>
+    const projects = [{"사업ID":"DP-001","사업명":"디지털혁신 과제 1","초기비용":831000000,"연간운영비":126000000,"연간수익":418000000,"기간":4},{"사업ID":"DP-002","사업명":"디지털혁신 과제 2","초기비용":805000000,"연간운영비":29000000,"연간수익":358000000,"기간":2},{"사업ID":"DP-003","사업명":"디지털혁신 과제 3","초기비용":770000000,"연간운영비":107000000,"연간수익":286000000,"기간":6},{"사업ID":"DP-004","사업명":"디지털혁신 과제 4","초기비용":993000000,"연간운영비":182000000,"연간수익":110000000,"기간":8},{"사업ID":"DP-005","사업명":"디지털혁신 과제 5","초기비용":184000000,"연간운영비":43000000,"연간수익":163000000,"기간":10},{"사업ID":"DP-006","사업명":"디지털혁신 과제 6","초기비용":947000000,"연간운영비":16000000,"연간수익":72000000,"기간":4},{"사업ID":"DP-007","사업명":"디지털혁신 과제 7","초기비용":209000000,"연간운영비":187000000,"연간수익":115000000,"기간":10},{"사업ID":"DP-008","사업명":"디지털혁신 과제 8","초기비용":635000000,"연간운영비":85000000,"연간수익":143000000,"기간":7},{"사업ID":"DP-009","사업명":"디지털혁신 과제 9","초기비용":981000000,"연간운영비":197000000,"연간수익":347000000,"기간":7},{"사업ID":"DP-010","사업명":"디지털혁신 과제 10","초기비용":332000000,"연간운영비":178000000,"연간수익":343000000,"기간":10},{"사업ID":"DP-011","사업명":"디지털혁신 과제 11","초기비용":354000000,"연간운영비":32000000,"연간수익":238000000,"기간":4},{"사업ID":"DP-012","사업명":"디지털혁신 과제 12","초기비용":694000000,"연간운영비":65000000,"연간수익":404000000,"기간":10},{"사업ID":"DP-013","사업명":"디지털혁신 과제 13","초기비용":622000000,"연간운영비":131000000,"연간수익":472000000,"기간":5},{"사업ID":"DP-014","사업명":"디지털혁신 과제 14","초기비용":829000000,"연간운영비":82000000,"연간수익":160000000,"기간":9},{"사업ID":"DP-015","사업명":"디지털혁신 과제 15","초기비용":922000000,"연간운영비":127000000,"연간수익":320000000,"기간":4},{"사업ID":"DP-016","사업명":"디지털혁신 과제 16","초기비용":825000000,"연간운영비":144000000,"연간수익":201000000,"기간":1},{"사업ID":"DP-017","사업명":"디지털혁신 과제 17","초기비용":593000000,"연간운영비":47000000,"연간수익":117000000,"기간":7},{"사업ID":"DP-018","사업명":"디지털혁신 과제 18","초기비용":625000000,"연간운영비":74000000,"연간수익":101000000,"기간":8},{"사업ID":"DP-019","사업명":"디지털혁신 과제 19","초기비용":456000000,"연간운영비":34000000,"연간수익":480000000,"기간":2},{"사업ID":"DP-020","사업명":"디지털혁신 과제 20","초기비용":413000000,"연간운영비":134000000,"연간수익":391000000,"기간":2},{"사업ID":"DP-021","사업명":"디지털혁신 과제 21","초기비용":676000000,"연간운영비":34000000,"연간수익":412000000,"기간":7},{"사업ID":"DP-022","사업명":"디지털혁신 과제 22","초기비용":398000000,"연간운영비":15000000,"연간수익":331000000,"기간":8},{"사업ID":"DP-023","사업명":"디지털혁신 과제 23","초기비용":711000000,"연간운영비":168000000,"연간수익":251000000,"기간":7},{"사업ID":"DP-024","사업명":"디지털혁신 과제 24","초기비용":938000000,"연간운영비":196000000,"연간수익":277000000,"기간":5},{"사업ID":"DP-025","사업명":"디지털혁신 과제 25","초기비용":867000000,"연간운영비":26000000,"연간수익":140000000,"기간":8},{"사업ID":"DP-026","사업명":"디지털혁신 과제 26","초기비용":897000000,"연간운영비":21000000,"연간수익":216000000,"기간":5},{"사업ID":"DP-027","사업명":"디지털혁신 과제 27","초기비용":993000000,"연간운영비":12000000,"연간수익":328000000,"기간":4},{"사업ID":"DP-028","사업명":"디지털혁신 과제 28","초기비용":678000000,"연간운영비":70000000,"연간수익":368000000,"기간":4},{"사업ID":"DP-029","사업명":"디지털혁신 과제 29","초기비용":334000000,"연간운영비":108000000,"연간수익":128000000,"기간":10},{"사업ID":"DP-030","사업명":"디지털혁신 과제 30","초기비용":186000000,"연간운영비":175000000,"연간수익":393000000,"기간":7}];
+
+    const searchInput = document.getElementById("searchInput");
+    const clearButton = document.getElementById("clearButton");
+    const projectGrid = document.getElementById("projectGrid");
+    const resultCount = document.getElementById("resultCount");
+    const emptyState = document.getElementById("emptyState");
+
+    const formatWon = (value) =>
+      new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+        maximumFractionDigits: 0
+      }).format(value);
+
+    const escapeHtml = (value) =>
+      String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    const highlight = (text, keyword) => {
+      const safeText = escapeHtml(text);
+      if (!keyword) return safeText;
+
+      const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return safeText.replace(
+        new RegExp(`(${escapedKeyword})`, "gi"),
+        "<mark>$1</mark>"
+      );
+    };
+
+    function createCard(project, keyword) {
+      return `
+        <article class="project-card">
+          <div class="card-top">
+            <span class="project-id">${highlight(project["사업ID"], keyword)}</span>
+            <span class="period-badge">${project["기간"]}년 사업</span>
+          </div>
+
+          <h2 class="project-name">${highlight(project["사업명"], keyword)}</h2>
+
+          <div class="metrics">
+            <div class="metric">
+              <span class="metric-label">초기비용</span>
+              <span class="metric-value">${formatWon(project["초기비용"])}</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">연간 운영비</span>
+              <span class="metric-value">${formatWon(project["연간운영비"])}</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">연간 수익</span>
+              <span class="metric-value revenue">${formatWon(project["연간수익"])}</span>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderProjects(keyword = "") {
+      const normalizedKeyword = keyword.trim().toLocaleLowerCase("ko-KR");
+
+      const filteredProjects = projects.filter((project) => {
+        const id = String(project["사업ID"]).toLocaleLowerCase("ko-KR");
+        const name = String(project["사업명"]).toLocaleLowerCase("ko-KR");
+        return id.includes(normalizedKeyword) || name.includes(normalizedKeyword);
+      });
+
+      projectGrid.innerHTML = filteredProjects
+        .map((project) => createCard(project, keyword.trim()))
+        .join("");
+
+      resultCount.innerHTML = `결과 <strong>${filteredProjects.length}</strong>건`;
+      emptyState.classList.toggle("visible", filteredProjects.length === 0);
+      projectGrid.hidden = filteredProjects.length === 0;
+      clearButton.classList.toggle("visible", keyword.length > 0);
+    }
+
+    searchInput.addEventListener("input", (event) => {
+      renderProjects(event.target.value);
+    });
+
+    clearButton.addEventListener("click", () => {
+      searchInput.value = "";
+      renderProjects();
+      searchInput.focus();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "/" && document.activeElement !== searchInput) {
+        event.preventDefault();
+        searchInput.focus();
+      }
+
+      if (event.key === "Escape" && document.activeElement === searchInput) {
+        searchInput.value = "";
+        renderProjects();
+      }
+    });
+
+    renderProjects();
+  </script>
+
+  <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</body>
+</html>
